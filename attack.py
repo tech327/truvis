@@ -4,7 +4,7 @@ import re
 import string
 from rapidfuzz import fuzz
 
-# === Load MITRE ATT&CK Data ===
+
 def load_mitre(file_path="enterprise-attack.json"):
     with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
