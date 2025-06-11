@@ -11,47 +11,18 @@ def load_mitre(file_path="enterprise-attack.json"):
     return [obj for obj in data["objects"] if obj.get("type") == "attack-pattern"]
 
 # === STRIDE Classifier ===
+with open("stride_5000_techniques.json", "r") as f:
+    stride_keywords = json.load(f)
+
 def stride_classify(text):
     text = text.lower()
-    spoofing_terms = [
-        "fake login", "impersonate", "spoof", "forged", "masquerade", "unauthorized access",
-        "credential theft", "phishing", "identity theft", "social engineering", "fake portal"
-    ]
-    tampering_terms = [
-        "modify", "tamper", "overwrite", "unauthorized change", "alter", "code injection",
-        "data manipulation", "file corruption", "configuration change", "injected payload"
-    ]
-    repudiation_terms = [
-        "deny", "repudiation", "non-repudiation", "erase logs", "deleted logs",
-        "log tampering", "activity denial", "unaudited access", "no logging", "untracked changes"
-    ]
-    info_disclosure_terms = [
-        "leak", "expose", "sensitive data", "unauthorized view", "unencrypted",
-        "data breach", "pii exposure", "information theft", "confidential", "unprotected"
-    ]
-    dos_terms = [
-        "denial", "unavailable", "slow", "ddos", "flood", "service disruption",
-        "downtime", "crash", "overload", "system failure", "resource exhaustion"
-    ]
-    elevation_terms = [
-        "admin access", "root access", "privilege escalation", "elevation of privilege",
-        "bypass authentication", "gain control", "escalated rights", "superuser", "unauthorized admin"
-    ]
 
-    if any(term in text for term in spoofing_terms):
-        return "Spoofing"
-    elif any(term in text for term in tampering_terms):
-        return "Tampering"
-    elif any(term in text for term in repudiation_terms):
-        return "Repudiation"
-    elif any(term in text for term in info_disclosure_terms):
-        return "Information Disclosure"
-    elif any(term in text for term in dos_terms):
-        return "Denial of Service"
-    elif any(term in text for term in elevation_terms):
-        return "Elevation of Privilege"
-    else:
-        return "Uncategorized"
+    for category, keywords in stride_keywords.items():
+        if any(term.lower() in text for term in keywords):
+            return category
+
+    return "Uncategorized"
+
 
 # === MITRE Technique Matcher ===
 def search_mitre(text, techniques):
